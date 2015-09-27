@@ -1,0 +1,17 @@
+{
+    "name": "powafi.kamikaze",
+    "description": "description of PowaFi",
+    "architecture": "@CLICK_ARCH@",
+    "title": "PowaFi",
+    "hooks": {
+        "PowaFi": {
+            "apparmor": "PowaFi/PowaFi.apparmor",
+            "desktop":  "PowaFi/PowaFi.desktop"
+        }
+    },
+    "version": "0.1",
+    "maintainer": "Michael Saunders <micksaunders+ut@gmail.com>",
+    "framework" : "ubuntu-sdk-15.04"
+}
+
+

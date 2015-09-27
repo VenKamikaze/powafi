@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=PowaFi
+Exec=qmlscene $@ PowaFi/Main.qml
+Icon=PowaFi/PowaFi.png
+Terminal=false
+Type=Application
+X-Ubuntu-Touch=true
+
