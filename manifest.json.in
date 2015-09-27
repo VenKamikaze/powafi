@@ -1,17 +1,15 @@
 {
     "name": "powafi.kamikaze",
-    "description": "description of PowaFi",
+    "description": "Basic control for orvibo-s20 and ARLINK devices",
     "architecture": "@CLICK_ARCH@",
     "title": "PowaFi",
     "hooks": {
         "PowaFi": {
             "apparmor": "PowaFi/PowaFi.apparmor",
-            "desktop":  "PowaFi/PowaFi.desktop"
+            "desktop": "PowaFi/PowaFi.desktop"
         }
     },
     "version": "0.1",
     "maintainer": "Michael Saunders <micksaunders+ut@gmail.com>",
-    "framework" : "ubuntu-sdk-15.04"
+    "framework": "ubuntu-sdk-15.04"
 }
-
-

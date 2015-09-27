@@ -30,9 +30,7 @@ UBUNTU_TRANSLATION_SOURCES+= \
 # specifies all translations files and makes sure they are
 # compiled and installed into the right place in the click package
 UBUNTU_PO_FILES+=$$files(po/*.po)
-und in syslog - try
-E: 10mount:        dmesg | tail  or so
-E: 10mount:
+
 aptest.target   = autopilot
 aptest.commands = QML2_IMPORT_PATH=$$OUT_PWD/backend bash $$PWD/app/tests/autopilot/run
 aptest.depends  = sub-app sub-backend-App
