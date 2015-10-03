@@ -31,7 +31,7 @@ MainView {
             id: myType
 
             Component.onCompleted: {
-                myType.helloWorld = i18n.tr("Hello world..")
+                //myType.helloWorld = i18n.tr("Hello world..")
             }
         }
 
