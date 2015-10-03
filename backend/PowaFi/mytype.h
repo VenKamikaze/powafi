@@ -14,7 +14,8 @@ public:
     Q_INVOKABLE void switchOnUDP(const QString &ip, quint16 port, const QString &mac);
     Q_INVOKABLE void switchOffUDP(const QString &ip, quint16 port, const QString &mac);
     Q_INVOKABLE void subscribeUDP(const QString &ip, quint16 port, const QString &mac);
-    Q_INVOKABLE void startDiscover(QStringList &devices);
+    Q_INVOKABLE void startDiscover();
+    Q_INVOKABLE QStringList getDiscoveredDevices();
     ~MyType();
 
     void convertToByteArray(QString finalCode, QByteArray &data);

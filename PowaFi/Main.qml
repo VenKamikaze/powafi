@@ -1,16 +1,18 @@
 import QtQuick 2.0
 import Ubuntu.Components 1.1
+import Ubuntu.Components.ListItems 1.0 as ListItem
 import PowaFi 1.0
 /*!
     \brief MainView with a Label and Button elements.
 */
 
 MainView {
+    id: root
     // objectName for functional testing purposes (autopilot-qt5)
     objectName: "mainView"
 
     // Note! applicationName needs to match the "name" field of the click manifest
-    applicationName: "powafi.kamikaze"
+    applicationName: "powafi-dev.kamikaze"
 
     /*
      This property enables the application to change orientation
@@ -24,8 +26,17 @@ MainView {
     width: units.gu(100)
     height: units.gu(75)
 
+    property real margins: units.gu(2)
+    property real buttonWidth: units.gu(4)
+
     Page {
-        title: i18n.tr("PowaFi")
+        function startupComplete() {
+            myType.startDiscover("0");
+        }
+
+        Component.onCompleted: startupComplete();
+
+        title: i18n.tr("PowaFi-dev")
 
         MyType {
             id: myType
@@ -36,11 +47,14 @@ MainView {
         }
 
         Column {
+            id: pageLayout
             spacing: units.gu(1)
             anchors {
-                margins: units.gu(2)
+                //margins: units.gu(2)
+                margins: root.margins
                 fill: parent
             }
+
 
             Row {
                 spacing: units.gu(1)
@@ -127,6 +141,50 @@ MainView {
                         myType.subscribeUDP(inputIP.text, 10000, inputMac.text);
                         myType.switchOffUDP(inputIP.text, 10000, inputMac.text);
                         //myType.helloWorld = i18n.tr("..from Cpp Backend")
+                    }
+                }
+            }
+
+
+            ListModel {
+                id: listDevices
+                ListElement {itemName: '--Select--'}
+            }
+
+            UbuntuListView {
+                id: inputDevice
+                objectName: "inputDevice"
+                //anchors.fill: parent
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+                //Layout.fillHeight: true
+
+                //clip: true
+                width: pageLayout.width - 2 * root.margins - root.buttonWidth
+                height: units.gu(5)
+
+                model: listDevices
+
+                delegate: ListItem.Expandable {
+                    id: expandingItem
+                    divider.visible: true
+                    expandedHeight: units.gu(20)
+                    Label {
+                        id: labelDiscover
+                        text: "Click to see nearby devices"
+                    }
+
+                    onClicked: {
+                        listDevices.clear();
+                        var deviceList = myType.getDiscoveredDevices();
+                        inputDevice.expandedIndex = index; // deviceList.length;
+                        for(var i = 0; i < deviceList.length; i++) {
+                            listDevices.append(deviceList)
+                        }
+                        inputDevice.update();
+                        //caller.input.update();
                     }
                 }
             }

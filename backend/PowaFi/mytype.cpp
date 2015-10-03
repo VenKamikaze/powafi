@@ -19,6 +19,12 @@ void MyType::readUDP()
 
 }
 
+QStringList MyType::getDiscoveredDevices()
+{
+    qDebug() << QString("getDiscoveredDevices - returning list of discovered devices");
+    return *m_deviceList;
+}
+
 void MyType::convertToByteArray(QString finalCode, QByteArray &data)
 {
     for(int i = 0; i < finalCode.size(); i=i+2)
@@ -34,13 +40,15 @@ QString MyType::buildHexPacket(const QString &actionCode, const QString &mac, co
     return finalCode;
 }
 
-void MyType::startDiscover(QStringList &devices)
+void MyType::startDiscover()
 {
+    qDebug() << QString("startDiscover - beginning");
     QByteArray *data = new QByteArray();
     convertToByteArray(QLatin1String("686400067161"), *data);
 
     m_discoverSock->bind(standardPort, QUdpSocket::ShareAddress);
     connect(m_discoverSock, SIGNAL(readyRead()), this, SLOT(processDiscoverPacket()), Qt::QueuedConnection);
+    qDebug() << QString("startDiscover - sent discover packet");
     m_discoverSock->writeDatagram(*data, QHostAddress::Broadcast, standardPort);
 
     delete data;
@@ -48,6 +56,7 @@ void MyType::startDiscover(QStringList &devices)
 
 void MyType::processDiscoverPacket()
 {
+    qDebug() << QString("processDiscoverPacket called");
     QByteArray *data = new QByteArray();
     if(m_discoverSock->pendingDatagramSize() <= 0)
         return;
@@ -58,17 +67,32 @@ void MyType::processDiscoverPacket()
     quint16 port;
     m_discoverSock->readDatagram(data->data(), data->size(), &sender, &port);
 
-    QString hexString = QString(data->toHex());
-    QStringRef command(&hexString, 8, 4);
-    if("7161" == command.toString())
+    if(data->length() > 12)
     {
-        QString startMac = "accf";
-        if(hexString.indexOf(startMac,12) != -1)
+        QString hexString = QString(data->toHex());
+        QStringRef command(&hexString, 8, 4);
+        qDebug() << "processDiscoverPacket - got code: " << command.toString();
+        if(QString("7161") == command.toString())
         {
-          QStringRef fullMac (&hexString, hexString.indexOf(startMac,12), hexString.indexOf(startMac,12)+12);
-          m_deviceList->append(fullMac.toString());
+            QString startMac = "accf";
+            if(hexString.indexOf(startMac,12) != -1)
+            {
+              QStringRef fullMac (&hexString, hexString.indexOf(startMac,12), 12);
+              QString entry = fullMac.toString() + "|" + sender.toString();
+              if( !m_deviceList->contains(entry) )
+              {
+                m_deviceList->append(fullMac.toString() + "|" + sender.toString());
+                qDebug() << QString("processDiscoverPacket - adding: " + fullMac.toString() + "|" + sender.toString());
+              }
+              else
+              {
+                qDebug() << QString("processDiscoverPacket - already exists: " + fullMac.toString() + "|" + sender.toString());
+              }
+            }
         }
     }
+
+    delete data;
 }
 
 
@@ -165,6 +189,7 @@ void MyType::switchOnUDP(const QString &ip, quint16 port, const QString &mac)
 
 
 MyType::~MyType() {
+    qDebug() << QString("destroying MyType");
     if(m_discoverSock)
     {
         if (m_discoverSock->isOpen())
