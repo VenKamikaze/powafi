@@ -1,8 +1,16 @@
 #include "mytype.h"
 
+#include <qqmlengine.h>
+#include <qqmlcontext.h>
+#include <qqml.h>
+#include <QtQuick/qquickitem.h>
+#include <QtQuick/qquickview.h>
+
+#include "deviceobject.h"
+
 /*
- * Terrible, needs to be refactored something serious.
- * Too noob at C++ these days to refactor this out... I hate having to deal with pointers
+ * This should be refactored
+ * However, it works as is, so SHIP IT, haha.
  */
 
 MyType::MyType(QObject *parent, uint standardPort) :
@@ -22,8 +30,53 @@ void MyType::readUDP()
 QStringList MyType::getDiscoveredDevices()
 {
     qDebug() << QString("getDiscoveredDevices - returning list of discovered devices");
+
+    QList<QObject*> dataList;
+    for(int i = 0; i < m_deviceList->size(); i++) {
+        QStringRef fullMac (&m_deviceList->at(i), 0, 12);
+        QStringRef address (&m_deviceList->at(i), 13, m_deviceList->at(i).length() - 13);
+        qDebug() << QString("getDiscoveredDevices - mac: " + fullMac.toString() + " address: "+address.toString());
+
+        dataList.append(new DeviceObject(fullMac.toString(), address.toString()));
+    }
+
+    QQuickView view;
+    //view.setResizeMode(QQuickView::SizeRootObjectToView);
+    QQmlContext *ctxt = view.rootContext();
+    ctxt->setContextProperty("listDevices", QVariant::fromValue(dataList));
+    //view.show();
+//    view.setSource(QUrl("qrc:view.qml"));
+//    view.show();
+
+    // TODO remove the following, this can just be a void function
     return *m_deviceList;
 }
+
+int MyType::getNumberDevicesFound()
+{
+    return m_deviceList->size();
+}
+
+QString MyType::getDeviceMac(uint index)
+{
+    if(index < m_deviceList->size())
+    {
+        QStringRef fullMac (&m_deviceList->at(index), 0, 12);
+        return fullMac.toString();
+    }
+    return QString("");
+}
+
+QString MyType::getDeviceIp(uint index)
+{
+    if(index < m_deviceList->size())
+    {
+        QStringRef address (&m_deviceList->at(index), 13, m_deviceList->at(index).length() - 13);
+        return address.toString();
+    }
+    return QString("");
+}
+
 
 void MyType::convertToByteArray(QString finalCode, QByteArray &data)
 {
@@ -98,8 +151,6 @@ void MyType::processDiscoverPacket()
 
 void MyType::subscribeUDP(const QString &ip, quint16 port, const QString &mac)
 {
-    //const QString subscribeCode = QLatin1String("6864001e636c");
-    //const QString twenties = QLatin1String("202020202020");
     QStringList macList = mac.split(":");
     QString reversedMac = "";
     for (int i=macList.size() -1; i >= 0; i--)
@@ -107,7 +158,6 @@ void MyType::subscribeUDP(const QString &ip, quint16 port, const QString &mac)
         reversedMac+=macList.at(i);
     }
 
-    //QString finalCode = subscribeCode + macList.join("") + twenties + reversedMac + twenties;
     QString finalCode = buildHexPacket("6864001e636c", macList.join(""), reversedMac + twenties);
 
     QByteArray *data = new QByteArray();
@@ -130,13 +180,8 @@ void MyType::subscribeUDP(const QString &ip, quint16 port, const QString &mac)
 
 void MyType::switchOffUDP(const QString &ip, quint16 port, const QString &mac)
 {
-    //const QString actionCode = QLatin1String("686400176463");
-    //const QString twenties = QLatin1String("202020202020");
-    //const QString powerCode = QLatin1String("0000000000");
-
     QStringList macList = mac.split(":");
 
-    //QString finalCode = actionCode + macList.join("") + twenties + powerCode;
     QString finalCode = buildHexPacket("686400176463", macList.join(""), "0000000000");
 
     QByteArray *data = new QByteArray();
@@ -160,13 +205,8 @@ void MyType::switchOffUDP(const QString &ip, quint16 port, const QString &mac)
 
 void MyType::switchOnUDP(const QString &ip, quint16 port, const QString &mac)
 {
-    //const QString actionCode = QLatin1String("686400176463");
-    //const QString twenties = QLatin1String("202020202020");
-    //const QString powerCode = QLatin1String("0000000001");
-
     QStringList macList = mac.split(":");
 
-    //QString finalCode = actionCode + macList.join("") + twenties + powerCode;
     QString finalCode = buildHexPacket("686400176463", macList.join(""), "0000000001");
 
     QByteArray *data = new QByteArray();
