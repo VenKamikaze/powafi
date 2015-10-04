@@ -62,7 +62,13 @@ QString MyType::getDeviceMac(uint index)
     if(index < m_deviceList->size())
     {
         QStringRef fullMac (&m_deviceList->at(index), 0, 12);
-        return fullMac.toString();
+        QString formattedMac = "";
+        for(int i=0; i < 12; i=i+2) {
+            if(i>0)
+                formattedMac += ":";
+            formattedMac += fullMac.mid(i, 2);
+        }
+        return formattedMac;
     }
     return QString("");
 }

@@ -51,6 +51,14 @@ MainView {
                 fill: parent
             }
 
+            Label {
+                id: labelInfo
+                objectName: "labelInfo"
+
+                text: "PowaFi will allow you to toggle\nthe power state of ARLINK or Orvibo\ndevices on your local network.\n\nTo use it, select a device\nand use the power buttons below.\n"
+                //width: units.gu(5)
+            }
+
             Row {
                 Button {
                     id: selectButton
@@ -60,7 +68,7 @@ MainView {
                     property TextField inputIP: inputIP
                     width: pageLayout.width - 2 * root.margins - root.buttonWidth
 
-                    text: "--Select Device--" //listDevices.getMac(deviceIndex)
+                    text: " -- Select Device -- "
 
                     onClicked: {
                         listDevices.updateDeviceList();
@@ -111,7 +119,7 @@ MainView {
                             height: pageLayout.height
                             Header {
                                 id: header
-                                text: i18n.tr("Select device")
+                                text: i18n.tr("Select device by MAC address")
                             }
                             ListView {
                                 clip: true
@@ -153,7 +161,7 @@ MainView {
                     width: pageLayout.width - 2 * root.margins - root.buttonWidth
                     height: units.gu(5)
                     font.pixelSize: FontUtils.sizeToPixels("medium")
-                    text: 'ac:cf:23:34:96:24'
+                    text: ''
 
                     function update() {
                         text = listDevices.getMac(selectButton.deviceIndex)
@@ -179,7 +187,7 @@ MainView {
                     width: pageLayout.width - 2 * root.margins - root.buttonWidth
                     height: units.gu(5)
                     font.pixelSize: FontUtils.sizeToPixels("medium")
-                    text: '192.168.4.108'
+                    text: ''
 
                     function update() {
                         text = listDevices.getIP(selectButton.deviceIndex)
@@ -190,7 +198,7 @@ MainView {
             Row {
                 spacing: units.gu(1)
                 Button {
-                    objectName: "button"
+                    objectName: "buttonOn"
                     width: pageLayout.width - 2 * root.margins - root.buttonWidth
 
                     text: i18n.tr("Power On")
@@ -202,7 +210,7 @@ MainView {
                 }
 
                 Button {
-                    objectName: "button"
+                    objectName: "buttonOff"
                     width: pageLayout.width - 2 * root.margins - root.buttonWidth
 
                     text: i18n.tr("Power Off")
@@ -214,6 +222,17 @@ MainView {
                 }
             }
 
+
+            Label {
+                x: units.gu(2)
+                y: pageLayout.height - units.gu(10)
+
+                id: labelTM
+                objectName: "labelTM"
+                property string fontSize: "smaller"
+                font.pixelSize: FontUtils.sizeToPixels(fontSize)
+                text: "This application is not endorsed by Arlec or Orvibo\n\nARLINK and Orvibo are trademarked\nby their respective companies."
+            }
             /*
             // Never figured out how to get this working properly, although
             // after configuring the Popup, I think I just didn't realise it needed to be

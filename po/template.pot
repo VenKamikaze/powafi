@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-04 12:36+0930\n"
+"POT-Creation-Date: 2015-10-04 17:48+0930\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,14 +21,14 @@ msgstr ""
 msgid "PowaFi"
 msgstr ""
 
-#: /home/mick/touch/powafi/PowaFi/Main.qml:114
-msgid "Select device"
+#: /home/mick/touch/powafi/PowaFi/Main.qml:122
+msgid "Select device by MAC address"
 msgstr ""
 
-#: /home/mick/touch/powafi/PowaFi/Main.qml:196
+#: /home/mick/touch/powafi/PowaFi/Main.qml:204
 msgid "Power On"
 msgstr ""
 
-#: /home/mick/touch/powafi/PowaFi/Main.qml:208
+#: /home/mick/touch/powafi/PowaFi/Main.qml:216
 msgid "Power Off"
 msgstr ""
