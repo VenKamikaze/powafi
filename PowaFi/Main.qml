@@ -13,7 +13,7 @@ MainView {
     objectName: "mainView"
 
     // Note! applicationName needs to match the "name" field of the click manifest
-    applicationName: "powafi-dev.kamikaze"
+    applicationName: "powafi.org.awiki.kamikaze"
 
     /*
      This property enables the application to change orientation
@@ -37,7 +37,7 @@ MainView {
 
         Component.onCompleted: startupComplete();
 
-        title: i18n.tr("PowaFi-dev")
+        title: i18n.tr("PowaFi")
 
         MyType {
             id: myType

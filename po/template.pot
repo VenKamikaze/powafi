@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-04 12:30+0930\n"
+"POT-Creation-Date: 2015-10-04 12:36+0930\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: /home/mick/touch/powafi/PowaFi/Main.qml:40
-msgid "PowaFi-dev"
+msgid "PowaFi"
 msgstr ""
 
 #: /home/mick/touch/powafi/PowaFi/Main.qml:114
