@@ -1,6 +1,6 @@
 {
     "name": "powafi.org.awiki.kamikaze",
-    "description": "Basic control for orvibo-s20 and ARLINK devices",
+    "description": "Basic control for orvibo s20 and ARLINK devices",
     "architecture": "@CLICK_ARCH@",
     "title": "PowaFi",
     "hooks": {
