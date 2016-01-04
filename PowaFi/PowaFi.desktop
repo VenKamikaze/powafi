@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=PowaFi
+GenericName=PowaFi Power State Control Utility
 Exec=qmlscene $@ PowaFi/Main.qml
 Icon=PowaFi/PowaFi.png
 Terminal=false
+Comment=Control power state of ARLINK and Orvibo S20 power devices over WiFi
 Type=Application
 X-Ubuntu-Touch=true
 

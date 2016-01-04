@@ -22,22 +22,89 @@
 
 #include "mytype.h"
 
+#include <qqmlengine.h>
+#include <qqmlcontext.h>
+#include <qqml.h>
+#include <QtQuick/qquickitem.h>
+#include <QtQuick/qquickview.h>
+
+#include "deviceobject.h"
+
 /*
- * Terrible, needs to be refactored something serious.
- * Too noob at C++ these days to refactor this out... I hate having to deal with pointers
+ * This should be refactored
+ * However, it works as is, so SHIP IT, haha.
  */
 
-MyType::MyType(QObject *parent) :
-    QObject(parent),
-    m_message("")
+MyType::MyType(QObject *parent, uint standardPort) :
+    QObject(parent)
 {
-
+    this->standardPort = standardPort;
+    m_discoverSock = new QUdpSocket(this);
+    m_deviceList = new QStringList();
+    twenties = "202020202020";
 }
 
 void MyType::readUDP()
 {
 
 }
+
+QStringList MyType::getDiscoveredDevices()
+{
+    qDebug() << QString("getDiscoveredDevices - returning list of discovered devices");
+
+    QList<QObject*> dataList;
+    for(int i = 0; i < m_deviceList->size(); i++) {
+        QStringRef fullMac (&m_deviceList->at(i), 0, 12);
+        QStringRef address (&m_deviceList->at(i), 13, m_deviceList->at(i).length() - 13);
+        qDebug() << QString("getDiscoveredDevices - mac: " + fullMac.toString() + " address: "+address.toString());
+
+        dataList.append(new DeviceObject(fullMac.toString(), address.toString()));
+    }
+
+    QQuickView view;
+    //view.setResizeMode(QQuickView::SizeRootObjectToView);
+    QQmlContext *ctxt = view.rootContext();
+    ctxt->setContextProperty("listDevices", QVariant::fromValue(dataList));
+    //view.show();
+//    view.setSource(QUrl("qrc:view.qml"));
+//    view.show();
+
+    // TODO remove the following, this can just be a void function
+    return *m_deviceList;
+}
+
+int MyType::getNumberDevicesFound()
+{
+    return m_deviceList->size();
+}
+
+QString MyType::getDeviceMac(uint index)
+{
+    if(index < m_deviceList->size())
+    {
+        QStringRef fullMac (&m_deviceList->at(index), 0, 12);
+        QString formattedMac = "";
+        for(int i=0; i < 12; i=i+2) {
+            if(i>0)
+                formattedMac += ":";
+            formattedMac += fullMac.mid(i, 2);
+        }
+        return formattedMac;
+    }
+    return QString("");
+}
+
+QString MyType::getDeviceIp(uint index)
+{
+    if(index < m_deviceList->size())
+    {
+        QStringRef address (&m_deviceList->at(index), 13, m_deviceList->at(index).length() - 13);
+        return address.toString();
+    }
+    return QString("");
+}
+
 
 void MyType::convertToByteArray(QString finalCode, QByteArray &data)
 {
@@ -48,10 +115,70 @@ void MyType::convertToByteArray(QString finalCode, QByteArray &data)
     }
 }
 
+QString MyType::buildHexPacket(const QString &actionCode, const QString &mac, const QString &endCode)
+{
+    const QString finalCode = actionCode + mac + twenties + endCode;
+    return finalCode;
+}
+
+void MyType::startDiscover()
+{
+    qDebug() << QString("startDiscover - beginning");
+    QByteArray *data = new QByteArray();
+    convertToByteArray(QLatin1String("686400067161"), *data);
+
+    m_discoverSock->bind(standardPort, QUdpSocket::ShareAddress);
+    connect(m_discoverSock, SIGNAL(readyRead()), this, SLOT(processDiscoverPacket()), Qt::QueuedConnection);
+    qDebug() << QString("startDiscover - sent discover packet");
+    m_discoverSock->writeDatagram(*data, QHostAddress::Broadcast, standardPort);
+
+    delete data;
+}
+
+void MyType::processDiscoverPacket()
+{
+    qDebug() << QString("processDiscoverPacket called");
+    QByteArray *data = new QByteArray();
+    if(m_discoverSock->pendingDatagramSize() <= 0)
+        return;
+
+    data->resize(m_discoverSock->pendingDatagramSize());
+
+    QHostAddress sender;
+    quint16 port;
+    m_discoverSock->readDatagram(data->data(), data->size(), &sender, &port);
+
+    if(data->length() > 12)
+    {
+        QString hexString = QString(data->toHex());
+        QStringRef command(&hexString, 8, 4);
+        qDebug() << "processDiscoverPacket - got code: " << command.toString();
+        if(QString("7161") == command.toString())
+        {
+            QString startMac = "accf";
+            if(hexString.indexOf(startMac,12) != -1)
+            {
+              QStringRef fullMac (&hexString, hexString.indexOf(startMac,12), 12);
+              QString entry = fullMac.toString() + "|" + sender.toString();
+              if( !m_deviceList->contains(entry) )
+              {
+                m_deviceList->append(fullMac.toString() + "|" + sender.toString());
+                qDebug() << QString("processDiscoverPacket - adding: " + fullMac.toString() + "|" + sender.toString());
+              }
+              else
+              {
+                qDebug() << QString("processDiscoverPacket - already exists: " + fullMac.toString() + "|" + sender.toString());
+              }
+            }
+        }
+    }
+
+    delete data;
+}
+
+
 void MyType::subscribeUDP(const QString &ip, quint16 port, const QString &mac)
 {
-    const QString subscribeCode = QLatin1String("6864001e636c");
-    const QString twenties = QLatin1String("202020202020");
     QStringList macList = mac.split(":");
     QString reversedMac = "";
     for (int i=macList.size() -1; i >= 0; i--)
@@ -59,7 +186,8 @@ void MyType::subscribeUDP(const QString &ip, quint16 port, const QString &mac)
         reversedMac+=macList.at(i);
     }
 
-    QString finalCode = subscribeCode + macList.join("") + twenties + reversedMac + twenties;
+    QString finalCode = buildHexPacket("6864001e636c", macList.join(""), reversedMac + twenties);
+
     QByteArray *data = new QByteArray();
     convertToByteArray(finalCode, *data);
 
@@ -68,7 +196,8 @@ void MyType::subscribeUDP(const QString &ip, quint16 port, const QString &mac)
 
     const QHostAddress addr(ip);
     socket->bind(addr, port);
-    connect(socket, SIGNAL(readUDP()), this, SLOT(readUDP()));
+    socket->waitForConnected(1200);
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readUDP()));
 
     socket->writeDatagram(*data, addr, port);
     socket->close();
@@ -79,13 +208,9 @@ void MyType::subscribeUDP(const QString &ip, quint16 port, const QString &mac)
 
 void MyType::switchOffUDP(const QString &ip, quint16 port, const QString &mac)
 {
-    const QString actionCode = QLatin1String("686400176463");
-    const QString twenties = QLatin1String("202020202020");
-    const QString powerCode = QLatin1String("0000000000");
-
     QStringList macList = mac.split(":");
 
-    QString finalCode = actionCode + macList.join("") + twenties + powerCode;
+    QString finalCode = buildHexPacket("686400176463", macList.join(""), "0000000000");
 
     QByteArray *data = new QByteArray();
     convertToByteArray(finalCode, *data);
@@ -95,7 +220,8 @@ void MyType::switchOffUDP(const QString &ip, quint16 port, const QString &mac)
 
     const QHostAddress addr(ip);
     socket->bind(addr, port);
-    connect(socket, SIGNAL(readUDP()), this, SLOT(readUDP()));
+    socket->waitForConnected(1200);
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readUDP()));
 
     socket->writeDatagram(*data, addr, port);
     socket->close();
@@ -107,13 +233,9 @@ void MyType::switchOffUDP(const QString &ip, quint16 port, const QString &mac)
 
 void MyType::switchOnUDP(const QString &ip, quint16 port, const QString &mac)
 {
-    const QString actionCode = QLatin1String("686400176463");
-    const QString twenties = QLatin1String("202020202020");
-    const QString powerCode = QLatin1String("0000000001");
-
     QStringList macList = mac.split(":");
 
-    QString finalCode = actionCode + macList.join("") + twenties + powerCode;
+    QString finalCode = buildHexPacket("686400176463", macList.join(""), "0000000001");
 
     QByteArray *data = new QByteArray();
     convertToByteArray(finalCode, *data);
@@ -123,7 +245,8 @@ void MyType::switchOnUDP(const QString &ip, quint16 port, const QString &mac)
 
     const QHostAddress addr(ip);
     socket->bind(addr, port);
-    connect(socket, SIGNAL(readUDP()), this, SLOT(readUDP()));
+    socket->waitForConnected(1200);
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readUDP()));
 
     socket->writeDatagram(*data, addr, port);
     socket->close();
@@ -134,6 +257,14 @@ void MyType::switchOnUDP(const QString &ip, quint16 port, const QString &mac)
 
 
 MyType::~MyType() {
+    qDebug() << QString("destroying MyType");
+    if(m_discoverSock)
+    {
+        if (m_discoverSock->isOpen())
+            m_discoverSock->close();
+    }
 
+    delete m_deviceList;
+    delete m_discoverSock;
 }
 
