@@ -1,5 +1,5 @@
 {
-    "name": "powafi.org.awiki.kamikaze",
+    "name": "powafi.org-awiki-kamikaze",
     "description": "Basic control for orvibo s20 and ARLINK devices",
     "architecture": "@CLICK_ARCH@",
     "title": "PowaFi",
@@ -11,5 +11,5 @@
     },
     "version": "0.2",
     "maintainer": "Michael Saunders <micksaunders+ut@gmail.com>",
-    "framework": "ubuntu-sdk-15.04"
+    "framework": "ubuntu-sdk-16.04"
 }
