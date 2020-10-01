@@ -82,6 +82,23 @@ MainView {
             }
 
             Row {
+
+                Button {
+                    id: rescanButton
+                    objectName: "rescanButton"
+                    width: pageLayout.width - 2 * root.margins - root.buttonWidth
+
+                    text: "Rescan"
+
+                    onClicked: {
+                        myType.startDiscover();
+                        update();
+                    }
+                }
+            }
+
+            Row {
+
                 Button {
                     id: selectButton
                     objectName: "selectButton"
@@ -94,6 +111,7 @@ MainView {
 
                     onClicked: {
                         listDevices.updateDeviceList();
+                        update();
                         PopupUtils.open(deviceSelector, selectButton)
                     }
                 }
@@ -114,7 +132,6 @@ MainView {
                         if(listDevices.count == 0) {
                             listDevices.append({"mac": "No Devices On LAN", "ip": '' });
                         }
-
                     }
 
 
