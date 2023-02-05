@@ -1,8 +1,8 @@
 import QtQuick 2.0
 import QtTest 1.0
-import Ubuntu.Test 1.0
+import Lomiri.Test 1.0
 import "../../"
-// See more details at https://developer.ubuntu.com/api/qml/sdk-14.10/Ubuntu.Test.UbuntuTestCase
+// See more details at https://developer.ubuntu.com/api/qml/sdk-14.10/Ubuntu.Test.LomiriTestCase
 
 // Execute these tests with:
 //   qmltestrunner
@@ -17,7 +17,7 @@ Item {
         id: main
     }
 
-    UbuntuTestCase {
+    LomiriTestCase {
         name: "MainTestCase"
 
         when: windowShown

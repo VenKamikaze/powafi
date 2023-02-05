@@ -21,9 +21,9 @@
 */
 
 import QtQuick 2.0
-import Ubuntu.Components 1.1
-import Ubuntu.Components.Popups 1.1
-import Ubuntu.Components.ListItems 1.1
+import Lomiri.Components 1.1
+import Lomiri.Components.Popups 1.1
+import Lomiri.Components.ListItems 1.1
 import PowaFi 1.0
 /*!
     \brief MainView with a Label and Button elements.
@@ -259,7 +259,7 @@ MainView {
             // Never figured out how to get this working properly, although
             // after configuring the Popup, I think I just didn't realise it needed to be
             // called to be 'opened' and wasn't an item that displayed on the screen by default.
-            UbuntuListView {
+            LomiriListView {
                 id: inputDevice
                 objectName: "inputDevice"
                 //anchors.fill: parent
