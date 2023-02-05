@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-04 17:48+0930\n"
+"POT-Creation-Date: 2023-02-05 05:39+0000\n"
 "PO-Revision-Date: 2020-10-03 16:22+0000\n"
 "Last-Translator: Anne017 <anneonyme017@openmailbox.org>\n"
 "Language: fr\n"
@@ -16,18 +16,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /home/mick/touch/powafi/PowaFi/Main.qml:40
+#: /home/msaun/personal/git/powafi/PowaFi/Main.qml:62
+#: /home/msaun/personal/git/powafi/build/x86_64-linux-gnu/app/install/PowaFi/Main.qml:62
 msgid "PowaFi"
 msgstr "PowaFi"
 
-#: /home/mick/touch/powafi/PowaFi/Main.qml:122
+#: /home/msaun/personal/git/powafi/PowaFi/Main.qml:144
+#: /home/msaun/personal/git/powafi/build/x86_64-linux-gnu/app/install/PowaFi/Main.qml:144
 msgid "Select device by MAC address"
 msgstr "Sélectionnez un appareil via son adresse MAC"
 
-#: /home/mick/touch/powafi/PowaFi/Main.qml:204
+#: /home/msaun/personal/git/powafi/PowaFi/Main.qml:226
+#: /home/msaun/personal/git/powafi/build/x86_64-linux-gnu/app/install/PowaFi/Main.qml:226
 msgid "Power On"
 msgstr "Allumer"
 
-#: /home/mick/touch/powafi/PowaFi/Main.qml:216
+#: /home/msaun/personal/git/powafi/PowaFi/Main.qml:238
+#: /home/msaun/personal/git/powafi/build/x86_64-linux-gnu/app/install/PowaFi/Main.qml:238
 msgid "Power Off"
 msgstr "Éteindre"
