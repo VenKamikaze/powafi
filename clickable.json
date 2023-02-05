@@ -1,6 +1,6 @@
 {
   "always_clean": true,
-  "clickable_minimum_required": "7.0.0",
+  "clickable_minimum_required": "7.9.0",
   "builder": "qmake",
   "build_args": "CONFIG+=c++11"
 }
